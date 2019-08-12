@@ -12,7 +12,7 @@ Util.ajax = axios.create({
 });
 
 // 添加相应拦截器
-Util.ajax.interceptors.reponse.use(res => {
+Util.ajax.interceptors.response.use(res => {
     return res.data;
 })
 
