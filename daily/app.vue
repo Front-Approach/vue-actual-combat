@@ -8,7 +8,7 @@
                 :class="{ on: type === 'daily'}"
                 @click="showThemes = !showThemes">主题日报</div>
             <ul v-show="showThemes">
-                <li v-for="item in themes">
+                <li v-for="item in themes" :key="item">
                     <a href="" :class="{on: item.id === themeId && type === 'daily'}">
                         {{ item.name }}
                     </a>
@@ -16,7 +16,7 @@
             </ul>
         </div>
         <div class="daily-list">
-            <Item v-for="item in list.stories" :data="item" :key="item.id"></Item>
+            <item v-for="item in beforData" :data="item" :key="item.id"></item>
         </div>
         <div class="daily-article"></div>
     </div>
@@ -24,13 +24,13 @@
 <script>
     import vTitle from './title.vue';
     import vButton from './button.vue';
-    import Item from './item.vue'
+    import item from './item.vue';
     import $ from './libs/utils';
 
     export default {
-        data () {
+        data() {
             return {
-                list:[],
+                list: [],
                 themes: [],
                 showThemes: false,
                 type: 'recommend',
@@ -39,51 +39,53 @@
                 articleId: 0,
                 isLoading: false,
                 recommendList: [],
-            }
+                beforData: []
+            };
         },
         components: {
             vTitle,
             vButton,
-            Item
+            item
         },
         methods: {
-            getThemes(){
+            getThemes() {
                 $.ajax.get('http://127.0.0.1:8010/themes').then(res => {
                     console.log(res);
                     this.themes = res.others;
-                })
+                });
             },
-            handleToTheme (id) {
-                //改变菜单分类 
+            handleToTheme(id) {
+                // 改变菜单分类
                 this.type = 'daily';
-                //设置当前点击子类的主题日报的id
+                // 设置当前点击子类的主题日报的id
                 this.themeId = id;
-                //清空中间栏的数据
+                // 清空中间栏的数据
                 this.list = [];
-                $.ajax.get('http://127.0.0.1:8010/thmem/ + id').then(res => {
-                    //过滤掉类型为1的文章，该类型下的文章为空
+                $.ajax.get(`http://127.0.0.1:8010/theme/${id}`).then(res => {
+                    // 过滤掉类型为1的文章，该类型下的文章为空
                     this.list = res.stories.filter(item => item.type !== 1);
-                })
+                });
             },
-            handleToRecommend () {
+            handleToRecommend() {
                 this.type = 'recommend';
                 this.recommendList = [];
                 this.dailyTime = $.getTodayTime();
                 this.getRecommendList();
             },
-            getRecommendList () {
+            getRecommendList() {
                 this.isLoading = true;
                 const prevDay = $.prevDay(this.dailyTime + 86400000);
                 $.ajax.get('http://127.0.0.1:8010/news/before/' + prevDay).then(res => {
                     this.recommendList.push(res);
+                    this.beforData = res.stories;
                     this.isLoading = false;
-                })
+                });
             }
         },
-        mounted () {
+        mounted() {
             this.getThemes();
         }
-    }
+    };
 </script>
 <style scoped>
 

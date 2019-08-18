@@ -3,7 +3,7 @@ import axios from 'axios';
 // 基本配置
 const Util = {
     imgPath: 'http://127.0.0.1:8011/img/',
-    apiPath: 'http://127.0.0.1:8010;'
+    apiPath: 'http://127.0.0.1:8010'
 };
 
 // ajax通用配置
@@ -12,9 +12,7 @@ Util.ajax = axios.create({
 });
 
 // 添加相应拦截器
-Util.ajax.interceptors.response.use(res => {
-    return res.data;
-})
+Util.ajax.interceptors.response.use(res => res.data);
 
 Util.getTodayTime = function () {
     const date = new Date();
