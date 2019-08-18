@@ -3,7 +3,7 @@ import App from './app.vue';
 
 new Vue({
     el: '#app',
-    render: h => {
-        return h(App)
+    render: func => {
+        return func(App)
     }
 });
